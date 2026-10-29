@@ -1,0 +1,30 @@
+# Fast check that the pipeline runs end to end (about a minute on CPU). NOT the reported study.
+data:
+  days: 120
+  data_seed: 42
+  test_share: 0.2
+  train_stride: 4
+model:
+  lookback: 168
+  horizon: 24
+  d_model: 32
+  layers: 2
+  heads: 4
+train:
+  epochs: 1
+  batch_size: 128
+  eval_batch_size: 512
+  lr: 0.001
+ablation:
+  settings:
+  - none
+  - sinusoidal
+  - learned
+  seeds:
+  - 0
+  - 1
+latency:
+  batch_size: 1
+  warmup: 20
+  trials: 30
+repeats: 2

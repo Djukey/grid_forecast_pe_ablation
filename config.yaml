@@ -1,0 +1,26 @@
+# Positional-encoding ablation for 24-hour demand forecasting.
+# Change settings here, not in the code. Every value below is part of the experiment record.
+data:
+  days: 730            # 2 years of hourly synthetic demand
+  data_seed: 42        # fixed: every run sees exactly the same data
+  test_share: 0.2      # the last 20% of the time series is the test period
+  train_stride: 4      # use every 4th training window (keeps a run near 5 s on a T4)
+model:
+  lookback: 168        # input sequence length: the past 7 days (168 hours)
+  horizon: 24          # output: the next 24 hours
+  d_model: 32
+  layers: 2
+  heads: 4
+train:
+  epochs: 10
+  batch_size: 128      # training batch size
+  eval_batch_size: 512 # test-set batch size (affects memory only, not accuracy)
+  lr: 0.001
+ablation:
+  settings: [none, sinusoidal, learned]   # the ONE factor that changes
+  seeds: [0, 1, 2]                        # independent training seeds per setting
+latency:
+  batch_size: 1        # one forecast at a time, as in a live control-room call
+  warmup: 20           # untimed calls
+  trials: 200          # timed calls per run
+repeats: 3             # whole study re-executed this many times (same seeds) to measure timing spread and check determinism
